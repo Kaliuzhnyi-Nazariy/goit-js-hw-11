@@ -86,7 +86,6 @@ async function addOptions(e) {
   // debugger;
   await seeMore(input, page, perPage)
     .then(dataInf => {
-
       const totalPages = Math.ceil(dataInf.totalHits / perPage);
 
       if (page > totalPages) {
@@ -96,8 +95,15 @@ async function addOptions(e) {
         return;
       }
 
+      let restPhoto = dataInf.totalHits - perPage * page;
+      if (restPhoto <= 0) {
+        restPhoto = 0;
+      } else {
+        restPhoto = restPhoto;
+      }
+
       renderGallery(dataInf.hits);
-      Notiflix.Notify.success(`Rest ${dataInf.totalHits - perPage * page} images.`);
+      Notiflix.Notify.success(`Rest ${restPhoto} images.`);
 
       loadMore.style.display = 'flex';
     })
