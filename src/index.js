@@ -97,7 +97,7 @@ async function addOptions(e) {
       }
 
       renderGallery(dataInf.hits);
-      Notiflix.Notify.success(`Hooray! We found ${dataInf.totalHits - perPage * page} images.`);
+      Notiflix.Notify.success(`Rest ${dataInf.totalHits - perPage * page} images.`);
 
       loadMore.style.display = 'flex';
     })
