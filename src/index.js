@@ -1,5 +1,5 @@
 import Notiflix from 'notiflix';
-import { makeRequest, seeMore } from './addition.js';
+import { makeRequest } from './API.js';
 
 const form = document.querySelector('#search-form');
 const inputUser = document.querySelector('input');
@@ -13,9 +13,9 @@ const perPage = 40;
 // const perPage = 3; // temprorary
 let isShown = 0;
 
-form.addEventListener('submit', formSubmit);
+form.addEventListener('submit', searchPhoto);
 
-function formSubmit(e) {
+function searchPhoto(e) {
   e.preventDefault();
 
   gallery.innerHTML = '';
@@ -25,22 +25,23 @@ function formSubmit(e) {
 
   if (info[0] === '') {
     Notiflix.Notify.failure('Please input some value.');
-  } else {
-    makeRequest(info, page, perPage)
-      .then(data => {
-        if (data.totalHits === 0) {
-          Notiflix.Notify.failure(
-            'Sorry, there are no images matching your search query. Please try again.'
-          );
-        } else {
-          renderGallery(data.hits);
-          Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
-
-          loadMore.style.display = 'flex';
-        }
-      })
-      .catch(error => console.log(error));
+    loadMore.style.display = 'none';
+    return;
   }
+  makeRequest(info, page, perPage)
+    .then(data => {
+      if (data.totalHits === 0) {
+        Notiflix.Notify.failure(
+          'Sorry, there are no images matching your search query. Please try again.'
+        );
+      } else {
+        renderGallery(data.hits);
+        Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
+
+        loadMore.style.display = 'flex';
+      }
+    })
+    .catch(error => console.log(error));
 }
 
 function renderGallery(images) {
@@ -73,9 +74,9 @@ function renderGallery(images) {
   gallery.insertAdjacentHTML('beforeend', markup);
 }
 
-loadMore.addEventListener('click', addOptions);
+loadMore.addEventListener('click', morePhotos);
 
-async function addOptions(e) {
+async function morePhotos(e) {
   e.preventDefault;
 
   const input = inputUser.value;
@@ -84,7 +85,7 @@ async function addOptions(e) {
   page += 1;
   console.log(page);
   // debugger;
-  await seeMore(input, page, perPage)
+  makeRequest(input, page, perPage)
     .then(dataInf => {
       const totalPages = Math.ceil(dataInf.totalHits / perPage);
 
